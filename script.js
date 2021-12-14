@@ -12,6 +12,8 @@ const bestScores = document.querySelectorAll(".best-score-value");
 const countdown = document.querySelector(".countdown");
 // Game Page
 const itemContainer = document.querySelector(".item-container");
+const wrongBtn = document.querySelector(".wrong");
+const rightBtn = document.querySelector(".right");
 // Score Page
 const finalTimeEl = document.querySelector(".final-time");
 const baseTimeEl = document.querySelector(".base-time");
@@ -22,6 +24,7 @@ const playAgainBtn = document.querySelector(".play-again");
 let questionAmount = 0;
 let equationsArray = [];
 // let countdownNumber = 3;
+let playerGuessArray = [];
 
 // Game Page
 let firstNumber = 0;
@@ -32,6 +35,18 @@ const wrongFormat = [];
 // Time
 
 // Scroll
+let valueY = 0;
+
+// Scroll and Store user selection in playerGuessArray
+const select = function (isGuessed) {
+  console.log("Player guess array", playerGuessArray);
+  valueY += 98;
+  itemContainer.scroll(0, valueY);
+  // Add player guess to array
+  return isGuessed
+    ? playerGuessArray.push("true")
+    : playerGuessArray.push("false");
+};
 
 // Get Random Number up to a max number
 const getRandomInt = function (max) {
@@ -69,29 +84,48 @@ function createEquations() {
     equationsArray.push(equationObject);
   }
   shuffle(equationsArray);
-  console.log("equations array: ", equationsArray);
 }
 
+// Add equations to DOM
+const equationsToDOM = function () {
+  equationsArray.forEach((equation) => {
+    const item = `
+    <div class="item">
+      <h1>${equation.value}</h1>
+    </div>;
+    `;
+    itemContainer.insertAdjacentHTML("beforeend", item);
+  });
+};
+
 // Dynamically adding correct/incorrect equations
-// function populateGamePage() {
-//   // Reset DOM, Set Blank Space Above
-//   itemContainer.textContent = '';
-//   // Spacer
-//   const topSpacer = document.createElement('div');
-//   topSpacer.classList.add('height-240');
-//   // Selected Item
-//   const selectedItem = document.createElement('div');
-//   selectedItem.classList.add('selected-item');
-//   // Append
-//   itemContainer.append(topSpacer, selectedItem);
+function populateGamePage() {
+  // Reset DOM, Set Blank Space Above
+  itemContainer.textContent = "";
+  // Spacer
+  const topSpacer = document.createElement("div");
+  topSpacer.classList.add("height-240");
 
-//   // Create Equations, Build Elements in DOM
+  // Selected Item
+  const selectedItem = document.createElement("div");
+  selectedItem.classList.add("selected-item");
+  // Append
 
-//   // Set Blank Space Below
-//   const bottomSpacer = document.createElement('div');
-//   bottomSpacer.classList.add('height-500');
-//   itemContainer.appendChild(bottomSpacer);
-// }
+  itemContainer.append(topSpacer, selectedItem);
+
+  // Create Equations, Build Elements in DOM
+  createEquations();
+  equationsToDOM();
+  // Set Blank Space Below
+  const bottomSpacer = document.createElement("div");
+  bottomSpacer.classList.add("height-500");
+  itemContainer.appendChild(bottomSpacer);
+}
+
+const changeToGamePage = function () {
+  countdownPage.hidden = true;
+  gamePage.hidden = false;
+};
 
 // Display 3,2,1 , GO!
 const countdownStart = function () {
@@ -123,7 +157,8 @@ const showCountdown = function () {
   countdownPage.hidden = false;
   splashPage.hidden = true;
   countdownStart();
-  createEquations();
+  populateGamePage();
+  setTimeout(changeToGamePage, 500);
 };
 
 // Get the value from selected radio button
@@ -157,3 +192,10 @@ startForm.addEventListener("click", () => {
 
 // Event Listeners
 startForm.addEventListener("submit", selectQuestionAmount);
+
+wrongBtn.addEventListener("click", () => {
+  select(false);
+});
+rightBtn.addEventListener("click", () => {
+  select(true);
+});
