@@ -21,6 +21,7 @@ const playAgainBtn = document.querySelector(".play-again");
 // Equations
 let questionAmount = 0;
 let equationsArray = [];
+let countdownNumber = 3;
 
 // Game Page
 let firstNumber = 0;
@@ -83,6 +84,38 @@ function createEquations() {
 //   itemContainer.appendChild(bottomSpacer);
 // }
 
+// Display 3,2,1 , GO!
+const countdownStart = function () {
+  countdown.textContent = "3";
+  setTimeout(() => {
+    countdown.textContent = "2";
+  }, 1000);
+  setTimeout(() => {
+    countdown.textContent = "1";
+  }, 2000);
+  setTimeout(() => {
+    countdown.textContent = "Go!";
+  }, 3000);
+
+  // const counting = setInterval(() => {
+  //   countdownNumber--;
+  //   countdown.textContent = countdownNumber;
+  //   if (countdownNumber === 0) {
+  //     countdown.textContent = "Go!";
+  //   }
+  // }, 1000);
+  // setTimeout(() => {
+  //   clearInterval(counting);
+  // }, 3000);
+};
+
+// Navigate from Splash Page to Countdown Page
+const showCountdown = function () {
+  countdownPage.hidden = false;
+  splashPage.hidden = true;
+  countdownStart();
+};
+
 // Get the value from selected radio button
 const getRadioValue = function () {
   let radioValue;
@@ -98,6 +131,7 @@ const getRadioValue = function () {
 const selectQuestionAmount = function (e) {
   e.preventDefault();
   questionAmount = getRadioValue();
+  questionAmount ? showCountdown() : "";
 };
 
 startForm.addEventListener("click", () => {
